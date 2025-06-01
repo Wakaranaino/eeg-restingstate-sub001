@@ -1,0 +1,60 @@
+# EEG Resting-State Analysis: ICA, PSD, and Bandpower Topomap (sub-001)
+
+This repository contains a full MATLAB script for preprocessing and analyzing resting-state EEG data using EEGLAB. The script was developed and tested on [OpenNeuro dataset: sub-001](https://openneuro.org/datasets/ds004504/) and is designed to convert manual steps into a fully automated pipeline.
+
+## Overview
+
+**Objective**: Process EEG data to extract clean spectral features (Theta, Alpha, Beta) and visualize topographic maps across scalp electrodes.
+
+**Pipeline**:
+1. Load dataset
+2. Bandpass filter (1–40 Hz)
+3. Re-reference to average
+4. Run ICA (Infomax)
+5. Reject selected components using ICLabel
+6. Compute Power Spectral Density (PSD)
+7. Extract bandpower (Theta: 4–7 Hz, Alpha: 8–13 Hz, Beta: 13–30 Hz)
+8. Plot topographic maps (topoplots)
+9. Save results to `.csv`
+
+## Files Included
+
+| File                        | Description                                 |
+|----------------------------|---------------------------------------------|
+| `eeg_analysis_sub001.m`    | Main MATLAB analysis script                 |
+| `sub001_psd_matrix.csv`    | PSD matrix exported after `spectopo()`      |
+| `sub001_bandpower_matrix.csv` | Theta, Alpha, Beta power by channel        |
+| `sub001_cleaned_final.set` | Cleaned EEGLAB dataset (not uploaded)       |
+| `README.md`                | This documentation                          |
+
+> Raw EEG `.set` file not included due to size. Tested on OpenNeuro sub-001 (eyes-closed).
+
+## Sample Output
+
+![Topomap Summary](docs/topomap_summary.png)  
+*Topographic maps of Theta, Alpha, and Beta bandpower, plus PSD distribution*
+
+## Requirements
+
+- MATLAB R2022a or later
+- [EEGLAB toolbox](https://sccn.ucsd.edu/eeglab/index.php)
+- Signal Processing Toolbox (for `pwelch`, `bandpower`)
+
+## Citation
+
+If you use this script or adapt it for academic work, feel free to credit:
+
+> Vermut Gao, "EEG Resting-State Pipeline – sub001 Analysis", 2025  
+> [GitHub Repository Link](https://github.com/YOUR_USERNAME/eeg-sub001-analysis)
+
+## Contact
+
+For questions or collaboration, reach out via GitHub or email: `vt.gao@asu.edu`
+
+## Dataset Attribution
+
+This script uses EEG data from the following OpenNeuro dataset:
+
+Andreas Miltiadous, Katerina D. Tzimourta, Theodora Afrantou, Panagiotis Ioannidis, Nikolaos Grigoriadis, Dimitrios G. Tsalikakis, Pantelis Angelidis, Markos G. Tsipouras, Evripidis Glavas, Nikolaos Giannakeas, Alexandros T. Tzallas (2024).
+A dataset of EEG recordings from: Alzheimer’s disease, Frontotemporal dementia and Healthy subjects.
+OpenNeuro. [Dataset] https://doi.org/10.18112/openneuro.ds004504.v1.0.8
