@@ -19,13 +19,13 @@ This repository contains a full MATLAB script for preprocessing and analyzing re
 
 ## Files Included
 
-| File                        | Description                                 |
-|----------------------------|---------------------------------------------|
-| `eeg_analysis_sub001.m`    | Main MATLAB analysis script                 |
-| `sub001_psd_matrix.csv`    | PSD matrix exported after `spectopo()`      |
-| `sub001_bandpower_matrix.csv` | Theta, Alpha, Beta power by channel        |
-| `sub001_cleaned_final.set` | Cleaned EEGLAB dataset (not uploaded)       |
-| `README.md`                | This documentation                          |
+| File                          | Description                                 |
+|-------------------------------|---------------------------------------------|
+| `eeg_analysis_sub001.m`       | Main MATLAB analysis script                 |
+| `sub001_psd_matrix.csv`       | PSD matrix exported after `spectopo()`      |
+| `sub001_bandpower_matrix.csv` | Theta, Alpha, Beta power by channel         |
+| `sub001_cleaned_final.set`    | Cleaned EEGLAB dataset (not uploaded)       |
+| `README.md`                   | This documentation                          |
 
 > Raw EEG `.set` file not included due to size. Tested on OpenNeuro sub-001 (eyes-closed).
 
