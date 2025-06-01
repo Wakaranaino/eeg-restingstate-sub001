@@ -22,9 +22,9 @@ This repository provides a complete MATLAB pipeline for preprocessing and analyz
 | File                          | Description                                 |
 |-------------------------------|---------------------------------------------|
 | `eeg_analysis_sub001.m`       | Main MATLAB analysis script                 |
-| `sub001_psd_matrix.csv`       | PSD matrix exported after `spectopo()`      |
+| `sub001_psd_matrix.csv`       | PSD matrix exported after `pop_spectopo()`  |
 | `sub001_bandpower_matrix.csv` | Theta, Alpha, Beta power by channel         |
-| `sub001_cleaned_final.set`    | Cleaned EEGLAB dataset (not uploaded)       |
+| `sub001_cleaned_final.set`    | Cleaned EEGLAB dataset                      |
 | `README.md`                   | This documentation                          |
 
 > Raw EEG `.set` file not included due to size. Tested on OpenNeuro sub-001 (eyes-closed).
