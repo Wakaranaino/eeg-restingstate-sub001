@@ -31,7 +31,7 @@ This repository contains a full MATLAB script for preprocessing and analyzing re
 
 ## Sample Output
 
-![Topomap Summary](docs/topomap_summary.png)  
+![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/topomap_summary.png)  
 *Topographic maps of Theta, Alpha, and Beta bandpower, plus PSD distribution*
 
 ## Requirements
