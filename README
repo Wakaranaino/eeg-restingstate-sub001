@@ -1,6 +1,6 @@
 # EEG Resting-State Analysis: ICA, PSD, and Bandpower Topomap (sub-001)
 
-This repository provides a complete MATLAB pipeline for preprocessing and analyzing resting-state EEG data using EEGLAB. The script was developed and tested on [OpenNeuro dataset: sub-001](https://openneuro.org/datasets/ds004504/) and is designed to convert manual steps into a fully automated pipeline.
+This repository provides a complete MATLAB pipeline for preprocessing and analyzing resting-state EEG data using EEGLAB. The script was developed and tested on [OpenNeuro dataset: sub-001](https://doi.org/10.18112/openneuro.ds004504.v1.0.8) and is designed to convert manual steps into a fully automated pipeline.
 
 ## Overview
 
