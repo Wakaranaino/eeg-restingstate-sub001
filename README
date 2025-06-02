@@ -1,37 +1,39 @@
 # EEG Resting-State Analysis: ICA, PSD, and Bandpower Topomap (sub-001)
 
-This repository provides a complete MATLAB pipeline for preprocessing and analyzing resting-state EEG data using EEGLAB. The script was developed and tested on [OpenNeuro dataset: sub-001](https://doi.org/10.18112/openneuro.ds004504.v1.0.8) and is designed to convert manual steps into a fully automated pipeline.
+This repository provides a complete MATLAB pipeline for preprocessing and analyzing resting-state EEG data using EEGLAB. The script was developed and tested on [OpenNeuro dataset: sub-001](https://doi.org/10.18112/openneuro.ds004504.v1.0.8) and transforms manual preprocessing steps into a fully automated, research-grade script.
 
 ## Overview
 
-**Objective**: Process EEG data to extract clean spectral features (Theta, Alpha, Beta) and visualize topographic maps across scalp electrodes.
+**Goal**: Extract clean spectral features (Theta, Alpha, Beta) from EEG and visualize scalp-wide topographic distributions.
 
 **Pipeline**:
-1. Load dataset
-2. Bandpass filter (1–40 Hz)
-3. Re-reference to average
-4. Run ICA (Infomax)
-5. Reject selected components using ICLabel
-6. Compute Power Spectral Density (PSD)
-7. Extract bandpower (Theta: 4–7 Hz, Alpha: 8–13 Hz, Beta: 13–30 Hz)
-8. Plot topographic maps (topoplots)
-9. Save results to `.csv`
+1. Load .set EEG dataset
+2. Automated artifact reduction via clean_rawdata()
+3. Bandpass filter (1–40 Hz)
+4. Re-reference to average
+5. Run ICA (Infomax)
+6. Component classification with ICLabel
+7. Auto-reject artifactual components (e.g., blinks, muscle, ECG)
+8. Compute PSD via pop_spectopo()
+9. Extract bandpower (Theta: 4–7 Hz, Alpha: 8–13 Hz, Beta: 13–30 Hz)
+10. Visualize as scalp topomaps
+11. Save PSD and bandpower to .csv
 
 ## Files Included
 
-| File                          | Description                                 |
-|-------------------------------|---------------------------------------------|
-| `eeg_analysis_sub001.m`       | Main MATLAB analysis script                 |
-| `sub001_psd_matrix.csv`       | PSD matrix exported after `pop_spectopo()`  |
-| `sub001_bandpower_matrix.csv` | Theta, Alpha, Beta power by channel         |
-| `sub001_cleaned_final.set`    | Cleaned EEGLAB dataset                      |
-| `README.md`                   | This documentation                          |
+| File                               | Description                                 |
+|------------------------------------|---------------------------------------------|
+| `eeg_analysis_sub001_v1.1.m`       | Main MATLAB analysis script (fully automated)                
+| `sub001_psd_matrix_v1.1.csv`       | PSD matrix exported after `pop_spectopo()`  |
+| `sub001_bandpower_matrix_v1.1.csv` | Theta, Alpha, Beta power by channel         |
+| `sub001_cleaned_final_v1.1.set`    | Cleaned EEGLAB dataset                      |
+| `README.md`                        | This documentation                          |
 
 > Raw EEG `.set` file not included due to size. Tested on OpenNeuro sub-001 (eyes-closed).
 
 ## Sample Output
 
-![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/topomap_summary.png)  
+![Topomap Summary_v1.1](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/topomap_summary.png)  
 *Topographic maps of Theta, Alpha, and Beta bandpower, plus PSD distribution*
 
 ## Requirements
@@ -39,6 +41,7 @@ This repository provides a complete MATLAB pipeline for preprocessing and analyz
 - MATLAB R2022a or later
 - [EEGLAB toolbox](https://sccn.ucsd.edu/eeglab/index.php)
 - Signal Processing Toolbox (for `pwelch`, `bandpower`)
+- Optional: clean_rawdata() plugin (EEGLAB plugin manager)
 
 ## Citation
 
@@ -61,6 +64,7 @@ OpenNeuro. [Dataset] https://doi.org/10.18112/openneuro.ds004504.v1.0.8
 
 ## Version
 
+- v1.1 – Jun 2, 2025: Fully automated version with clean_rawdata() + ICLabel rejection
 - v1.0 – Initial release (Jun 1st, 2025), Development ongoing_
 
 ## License
