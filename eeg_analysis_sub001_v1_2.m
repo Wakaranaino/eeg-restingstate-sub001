@@ -1,0 +1,179 @@
+clear; close all; clc
+
+% ------------------------------------------------------------------------------------------
+% Version: v1.2 | Last updated: June 3, 2025
+%
+% Updates:
+% • Upgraded artifact cleaning to research-level parameters:
+%     clean_rawdata(EEG, 5, [0.25 0.75], 0.85, 4, 4, 0.2)
+%     - Soft high-pass filter (0.25–0.75 Hz transition band)
+%     - ASR burst rejection threshold: 4 SD
+%     - Line noise: 4 SD | Window rejection: 20% bad channels
+% • Retained pop_eegfiltnew() for low-pass filtering at 40 Hz
+% • ICA-based artifact rejection using ICLabel (brain prob < 0.3; was < 0.5 in v1.1)
+% • Automated generation of PSD plots and bandpower topomaps
+% • Added spectopo() for full-channel PSD matrix output (cleaner than pop_spectopo)
+% -------------------------------------------------------------------------------------------
+
+
+% EEG Analysis Script for Subject 001
+% Manual-style processing turned into script
+% Pipeline: Load → ICA → Component Rejection → PSD → Bandpower → Topomap
+% Author: Vermut Gao
+% Date: Jun 1st, 2025
+
+eeglab;
+
+% Load original dataset
+EEG = pop_loadset('filename', 'sub-001_task-eyesclosed_eeg.set', 'filepath', '/Users/bohago/Desktop/neuro analysis/EEG resting-state_Jun 2025/sub-001/eeg/');
+[ALLEEG, EEG, CURRENTSET] = eeg_store(ALLEEG, EEG, 0);
+
+% Automated Pre-Cleaning (via clean_rawdata)
+% EEG = clean_rawdata(EEG, 5, -1, 0.85, -1, -1, -1);
+
+% Automated artifact rejection using `clean_rawdata()` (ASR 5 SD, soft 0.5 Hz high-pass)
+EEG = clean_rawdata(EEG, 5, [0.25 0.75], 0.85, 4, 4, 0.2);
+
+% Apply low-pass filter at 40 Hz (high-pass already handled by clean_rawdata)
+EEG = pop_eegfiltnew(EEG, 'hicutoff', 40);
+[ALLEEG, EEG, CURRENTSET] = eeg_store(ALLEEG, EEG, CURRENTSET);
+
+% Re-reference to average
+EEG = pop_reref(EEG, []);
+[ALLEEG, EEG, CURRENTSET] = eeg_store(ALLEEG, EEG, CURRENTSET);
+
+% Run ICA (extended Infomax)
+EEG = pop_runica(EEG, 'extended', 1);
+[ALLEEG, EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
+
+% Label components using ICLabel
+EEG = pop_iclabel(EEG, 'default');
+[ALLEEG, EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
+
+% Reject selected components (based on ICLabel visual inspection)
+% EEG = pop_subcomp(EEG, [1 2 3 5 10 14 16 18 19], 0);
+% [ALLEEG, EEG, CURRENTSET] = eeg_store(ALLEEG, EEG, CURRENTSET);
+
+% Reject components with Brain probability < 0.5 (automated ICLabel threshold)
+artifactICs = find(EEG.etc.ic_classification.ICLabel.classifications(:,1) < 0.3); 
+EEG = pop_subcomp(EEG, artifactICs, 0);
+
+mkdir('outputs')
+
+% Power Spectral Density (PSD) Computation
+[psdAll, freqs] = spectopo(EEG.data, 0, EEG.srate, 'plot', 'off', 'freqrange', [2 25]);
+writematrix(psdAll, fullfile('outputs','sub001_psd_matrix_v1.2.csv'));
+
+% === PSD with no scalp maps (for topomap summary) ===
+specdata = pop_spectopo(EEG, 1, [0 599798], 'EEG', 'freqrange',[2 25], 'electrodes','off', 'freqs',[6 10 22]);
+
+% Save the PSD figure
+saveas(gcf, fullfile('outputs', 'sub001_psd_scalp_v1.2.png'));
+
+% Compute bandpower for Theta, Alpha, Beta bands across all EEG channels
+% Assumes cleaned EEG dataset is already loaded into EEGLAB as 'EEG'
+
+% Band definitions (Hz)
+theta_band = [4 7];
+alpha_band = [8 13];
+beta_band  = [13 30];
+
+fs = EEG.srate;  % Sampling rate
+
+% Initialize bandpower arrays
+theta_power = zeros(1, EEG.nbchan);
+alpha_power = zeros(1, EEG.nbchan);
+beta_power  = zeros(1, EEG.nbchan);
+
+% Loop through channels
+for ch = 1:EEG.nbchan
+    data = EEG.data(ch, :);
+    [pxx, f] = pwelch(data, hamming(1024), [], [], fs);
+
+    theta_power(ch) = bandpower(pxx, f, theta_band, 'psd');
+    alpha_power(ch) = bandpower(pxx, f, alpha_band, 'psd');
+    beta_power(ch)  = bandpower(pxx, f, beta_band, 'psd');
+end
+
+% Create result table
+channel_labels = {EEG.chanlocs.labels};
+T = table(channel_labels', theta_power', alpha_power', beta_power', ...
+    'VariableNames', {'Channel', 'ThetaPower', 'AlphaPower', 'BetaPower'});
+disp(T)
+
+writetable(T, fullfile('outputs', 'sub001_bandpower_matrix_v1.2.csv'));
+
+% Plot topographic maps
+figure('Position', [100, 100, 1200, 400]);
+
+subplot(1,3,1);
+topoplot(theta_power, EEG.chanlocs, 'maplimits', 'maxmin', 'electrodes', 'on');
+title('Theta Power (4–7 Hz)');
+colorbar;
+
+subplot(1,3,2);
+topoplot(alpha_power, EEG.chanlocs, 'maplimits', 'maxmin', 'electrodes', 'on');
+title('Alpha Power (8–13 Hz)');
+colorbar;
+
+subplot(1,3,3);
+topoplot(beta_power, EEG.chanlocs, 'maplimits', 'maxmin', 'electrodes', 'on');
+title('Beta Power (13–30 Hz)');
+colorbar;
+
+% Save the topographic map as PNG
+saveas(gcf, fullfile('outputs', 'sub001_bandpower_v1.2.png'));
+
+% ========Save the combined topomap as PNG=========
+figure('Position', [100, 100, 1200, 800]);  % Bigger figure window
+
+% PSD subplot
+subplot(2,2,1);
+pop_spectopo(EEG, 1, [0 EEG.pnts], 'EEG', 'freqrange', [2 25], 'electrodes', 'off');
+title('PSD (2–25 Hz)');
+colorbar;
+
+% Theta topomap
+subplot(2,2,2);
+topoplot(theta_power, EEG.chanlocs, 'maplimits', 'maxmin', 'electrodes', 'on');
+title('Theta Power (4–7 Hz)');
+colorbar;
+
+% Alpha topomap
+subplot(2,2,3);
+topoplot(alpha_power, EEG.chanlocs, 'maplimits', 'maxmin', 'electrodes', 'on');
+title('Alpha Power (8–13 Hz)');
+colorbar;
+
+% Beta topomap
+subplot(2,2,4);
+topoplot(beta_power, EEG.chanlocs, 'maplimits', 'maxmin', 'electrodes', 'on');
+title('Beta Power (13–30 Hz)');
+colorbar;
+
+% Save the combined figure
+saveas(gcf, fullfile('outputs', 'sub001_topomap_summary_v1.2.png'));
+
+% Save final dataset
+EEG = pop_saveset(EEG, 'filename','sub001_cleaned_final_v1.2.set', 'filepath', 'outputs/');
+
+% Reload final dataset into EEGLAB GUI
+EEG = pop_loadset('filename','sub001_cleaned_final_v1.2.set', 'filepath', 'outputs/');
+[ALLEEG, EEG, CURRENTSET] = eeg_store(ALLEEG, EEG, CURRENTSET);
+eeglab redraw;
+
+disp('Saved: sub001_psd_matrix_v1.2.csv');
+disp('Saved: sub001_bandpower_matrix_v1.2.csv');
+disp('Saved: sub001_psd_scalp_v1.2.png');
+disp('Saved: sub001_bandpower_v1.2.png');
+disp('Saved: sub001_topomap_summary_v1.2.png');
+disp('Saved: sub001_cleaned_final_v1.2.set')
+
+
+
+
+
+% -------------------------------------------------------------------------
+% Previous Versions:
+% v1.1 (June 2, 2025) – Initial automation added: clean_rawdata + ICLabel
+% -------------------------------------------------------------------------
