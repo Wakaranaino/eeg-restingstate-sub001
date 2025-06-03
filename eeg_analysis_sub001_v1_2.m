@@ -10,7 +10,6 @@ clear; close all; clc
 %     - ASR burst rejection threshold: 4 SD
 %     - Line noise: 4 SD | Window rejection: 20% bad channels
 % • Retained pop_eegfiltnew() for low-pass filtering at 40 Hz
-% • ICA-based artifact rejection using ICLabel (brain prob < 0.3; was < 0.5 in v1.1)
 % • Automated generation of PSD plots and bandpower topomaps
 % • Added spectopo() for full-channel PSD matrix output (cleaner than pop_spectopo)
 % -------------------------------------------------------------------------------------------
@@ -31,7 +30,7 @@ EEG = pop_loadset('filename', 'sub-001_task-eyesclosed_eeg.set', 'filepath', '/U
 % Automated Pre-Cleaning (via clean_rawdata)
 % EEG = clean_rawdata(EEG, 5, -1, 0.85, -1, -1, -1);
 
-% Automated artifact rejection using `clean_rawdata()` (ASR 5 SD, soft 0.5 Hz high-pass)
+% Automated artifact rejection using `clean_rawdata()` (ASR 4 SD, soft 0.5 Hz high-pass)
 EEG = clean_rawdata(EEG, 5, [0.25 0.75], 0.85, 4, 4, 0.2);
 
 % Apply low-pass filter at 40 Hz (high-pass already handled by clean_rawdata)
@@ -55,7 +54,7 @@ EEG = pop_iclabel(EEG, 'default');
 % [ALLEEG, EEG, CURRENTSET] = eeg_store(ALLEEG, EEG, CURRENTSET);
 
 % Reject components with Brain probability < 0.5 (automated ICLabel threshold)
-artifactICs = find(EEG.etc.ic_classification.ICLabel.classifications(:,1) < 0.3); 
+artifactICs = find(EEG.etc.ic_classification.ICLabel.classifications(:,1) < 0.5); 
 EEG = pop_subcomp(EEG, artifactICs, 0);
 
 mkdir('outputs')
