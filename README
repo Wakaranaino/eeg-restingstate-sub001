@@ -22,14 +22,17 @@ This repository provides a complete MATLAB pipeline for preprocessing and analyz
 
 ## Files Included
 
-| File                               | Description                                 |
-|------------------------------------|---------------------------------------------|
-| `eeg_analysis_sub001_v1.2.m`       | Main MATLAB analysis script (fully automated)                
-| `sub001_psd_matrix_v1.2.csv`       | PSD matrix (all channels) via spectopo()    |
-| `sub001_bandpower_matrix_v1.2.csv` | Theta, Alpha, Beta power by channel         |
-| `sub001_topomap_summary_v1.2.png`  | Combined figure (PSD + 3 band topomaps)     |
-| `sub001_cleaned_final_v1.1.set`    | Cleaned EEGLAB dataset                      |
-| `README.md`                        | This documentation                          |
+| File                               | Description                                         |
+|------------------------------------|-----------------------------------------------------|
+| eeg_analysis_sub001_v1_3.m         | Main MATLAB analysis script (fully automated)       |
+| sub001_cleaned_final_v1.3.set      | Cleaned EEGLAB dataset                              | 
+| sub001_psd_matrix_v1.3.csv         | PSD matrix (all channels) via spectopo()            |
+| sub001_bandpower_matrix_v1.3.csv   | Theta, Alpha, Beta power by channel                 |
+| sub001_qc_log_v1.3.txt             | Per-subject QC log (ICs rejected + bandpower means) |
+| sub001_summary_v1.3.mat            | Saved variables for batch/group QC analysis         |
+| qc_summary_all_subjects.csv        | Master group-level QC tracking (each subject)       |
+| sub001_topomap_summary_v1.3.png    | Combined figure (PSD + 3 band topomaps)             |
+| README.md                          | This documentation                                  |
 
 > Raw EEG `.set` file not included due to size. Tested on OpenNeuro sub-001 (eyes-closed).
 
@@ -63,13 +66,19 @@ This script uses EEG data from the following OpenNeuro dataset:
 Andreas Miltiadous, Katerina D. Tzimourta, Theodora Afrantou, Panagiotis Ioannidis, Nikolaos Grigoriadis, Dimitrios G. Tsalikakis, Pantelis Angelidis, Markos G. Tsipouras, Evripidis Glavas, Nikolaos Giannakeas, Alexandros T. Tzallas (2024).
 A dataset of EEG recordings from: Alzheimer’s disease, Frontotemporal dementia and Healthy subjects.
 OpenNeuro. [Dataset] https://doi.org/10.18112/openneuro.ds004504.v1.0.8
-
 ## Version
 
-- v1.2 – Jun 3, 2025: 
-  Major upgrade: research-level clean_rawdata(), added spectopo() for full PSD matrix, organized output folder
-- v1.1 – Jun 2, 2025: Fully automated version with clean_rawdata() + ICLabel rejection
-- v1.0 – Initial release (Jun 1st, 2025), Development ongoing_
+- v1.3 – Jun 6, 2025:  
+  Modularized analysis script with preprocessing switch:
+  - Added `load_cleaned_set` logic to skip ICA/cleaning for reruns
+  - Refactored bandpower code with `band_defs` + dynamic `bandpower_struct`
+  - Generated topomaps and summary plots automatically for each band
+  - Saved per-subject QC logs (.txt + .mat) and appended to a master `.csv` for multi-subject tracking
+- v1.2 – Jun 3, 2025:  
+  Major upgrade: research-level `clean_rawdata()`, added `spectopo()` for full PSD matrix, organized output folder
+- v1.1 – Jun 2, 2025:  
+  Fully automated version with `clean_rawdata()` + ICLabel rejection
+- v1.0 – Initial release (Jun 1, 2025)
 
 ## License
 
