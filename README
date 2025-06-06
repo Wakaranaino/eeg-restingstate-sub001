@@ -38,7 +38,7 @@ This repository provides a complete MATLAB pipeline for preprocessing and analyz
 
 ## Sample Output
 
-![Topomap Summary_v1.1](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/sub001_topomap_summary_v1.2.png)  
+![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/sub001_topomap_summary_v1.2.png)  
 *Topographic maps of Theta, Alpha, and Beta bandpower, plus PSD distribution*
 
 ## Requirements
