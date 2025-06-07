@@ -1,5 +1,0 @@
-Subject: sub-001
-ICs rejected: 5
-Theta Power Mean: 5.3766
-Alpha Power Mean: 1.8352
-Beta Power Mean: 1.9755
