@@ -51,7 +51,7 @@ This repository provides a fully automated MATLAB pipeline for preprocessing and
 
 ## Sample Output
 
-![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/sub001_topomap_summary_v1.2.png)  
+![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/sub-001_v1.3_topomap_summary.png)  
 *Topographic maps of Theta, Alpha, and Beta bandpower, plus PSD distribution*
 
 ## Requirements
@@ -88,11 +88,12 @@ OpenNeuro. [Dataset] https://doi.org/10.18112/openneuro.ds004504.v1.0.8
   - Ready for group-level comparison and visualization
   - Includes subject integrity checker
 - v1.3 – Jun 6, 2025:  
-  Modularized analysis script with preprocessing switch:
-  - Added `load_cleaned_set` logic to skip ICA/cleaning for reruns
-  - Refactored bandpower code with `band_defs` + dynamic `bandpower_struct`
-  - Generated topomaps and summary plots automatically for each band
-  - Saved per-subject QC logs (.txt + .mat) and appended to a master `.csv` for multi-subject tracking
+  Refactored for multi-subject scaling and reusability:
+  - Added load_cleaned_set to skip preprocessing on reruns
+  - Standardized path handling and parameter setup
+  - Modularized bandpower logic (band_defs, bandpower_struct)
+  - Automated QC logging (.txt, .mat, master .csv)
+  - Adaptive plotting for topomaps and summaries
 - v1.2 – Jun 3, 2025:  
   Major upgrade: research-level `clean_rawdata()`, added `spectopo()` for full PSD matrix, organized output folder
 - v1.1 – Jun 2, 2025:  
