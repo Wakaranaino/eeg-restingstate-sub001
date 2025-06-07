@@ -31,7 +31,7 @@ This repository provides a fully automated MATLAB pipeline for preprocessing and
 
 ## Files Included
 
-| Folder/File                               | Description                                         |
+| Folder/File                        | Description                                         |
 |------------------------------------|-----------------------------------------------------|
 | eeg_analysis_multisub_v2_0.m       | Multi-subject MATLAB analysis script                |
 | check_subject_integrity.m          | script to verify output consistency                 |
@@ -51,7 +51,7 @@ This repository provides a fully automated MATLAB pipeline for preprocessing and
 
 ## Sample Output
 
-![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/sub-001_v1.3_topomap_summary.png)  
+![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/sub-001/sub-001_v2.0_topomap_summary.png)  
 *Topographic maps of Theta, Alpha, and Beta bandpower, plus PSD distribution*
 
 ## Requirements
