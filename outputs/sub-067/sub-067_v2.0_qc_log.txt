@@ -1,7 +1,0 @@
-Subject: sub-067
-ICs rejected: 7
-Interpolated Channels: 3
-Channels: Fp1, T3, T4
-Theta Power Mean: 2.0776
-Alpha Power Mean: 10.0840
-Beta Power Mean: 11.3402
