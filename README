@@ -10,41 +10,39 @@ This repository provides a fully automated MATLAB pipeline for preprocessing and
 1. Load .set EEG dataset
 2. Automated artifact reduction via clean_rawdata()
 3. Apply low-pass filter at 40 Hz
-4. Re-reference to average
+4. Re-reference to average and interpolate missing channels (optional, spherical)
 5. Run ICA (Infomax)
 6. Component classification with ICLabel
 7. Auto-reject artifactual components (e.g., blinks, muscle, ECG)
 8. Compute PSD matrix via spectopo()
 9. Generate PSD plots and scalp maps via pop_spectopo()
 10. Normalize bandpower within each subject (proportional to total power)
-11. Log QC metrics (ICs rejected, bandpower means) to a master CSV
+11. Log QC metrics (ICs rejected, bandpower means, interpolated channels) to a master CSV and per-subject log
 12. Save all outputs to organized subject-level folders under /outputs/
 
-***New in Version 2.0***
-- Multi-subject loop (batch-ready)
-- Subject-level modular outputs
-- Normalized bandpower for across-subject comparison
-- Group-level QC summary in qc_summary_all_subjects.csv
-- Ready for group analysis (e.g., healthy vs. AD)
-- Includes integrity checks (NaNs, bad channels)
-- Can integrate with external demographic files like participants.tsv
+***New in Version 2.1 (June 9, 2025)***
+- Channel interpolation added (spherical method)
+- Logs interpolated channels per subject (mat + QC txt)
+- Compatible with group-level topomap averaging
+- Visual red-flag overlay removed (replaced with text logs for clarity)
 
 ## Files Included
 
-| Folder/File                        | Description                                         |
-|------------------------------------|-----------------------------------------------------|
-| eeg_analysis_multisub_v2_0.m       | Multi-subject MATLAB analysis script                |
-| check_subject_integrity.m          | script to verify output consistency                 |
-| README.md                          | This documentation                                  |
-| outputs/                           | Contains all per-subject outputs listed below       |
-
-| sub-XXX_cleaned_final_v1.3.set     | Cleaned EEGLAB datasets (auto-generated)            | 
-| _psd_matrix_v1.3.csv               | PSD matrix (all channels) via spectopo()            |
-| _bandpower_matrix_v1.3.csv         | Theta, Alpha, Beta power by channel                 |
-| _qc_log_v1.3.txt                   | Per-subject QC log (ICs rejected + bandpower means) |
-| _summary_v1.3.mat                  | Saved variables for batch/group QC analysis         |
-| _topomap_summary_v1.3.png          | Combined figure (PSD + 3 band topomaps)             |
-| qc_summary_all_subjects.csv        | Master log of normalized bandpower + ICs rejected   |
+| Folder/File                        | Description                                                               |
+|------------------------------------|---------------------------------------------------------------------------|
+| eeg_analysis_multisub_v2_1.m       | Multi-subject MATLAB analysis script                                      |
+| check_subject_integrity.m          | script to verify output consistency                                       |
+| README.md                          | This documentation                                                        |
+| outputs/                           | Contains all per-subject outputs listed below                             |
+|----------------------------------------------------------------------------------------------------------------|
+| sub-XXX_cleaned_final_v2.1.set     | Cleaned EEGLAB datasets (auto-generated)                                  | 
+| _psd_matrix_v2.1.csv               | PSD matrix (all channels) via spectopo()                                  |
+| _bandpower_matrix_v2.1.csv         | Theta, Alpha, Beta power by channel                                       |
+| _qc_log_v2.1.txt                   | Per-subject QC log (ICs rejected, bandpower means, interpolated channels) |
+| _interpolation_log_v2.1.mat        | Per-subject .mat file with interpolated channel flags and labels          |
+| _summary_v2.1.mat                  | Saved variables for batch/group QC analysis                               |
+| _topomap_summary_v2.1.png          | Combined figure (PSD + 3 band topomaps)                                   |
+| qc_summary_all_subjects.csv        | Master log of normalized bandpower + ICs rejected                         |
 
 
 > Raw EEG `.set` file not included due to size. Tested on OpenNeuro sub-001 (eyes-closed).
@@ -82,6 +80,11 @@ OpenNeuro. [Dataset] https://doi.org/10.18112/openneuro.ds004504.v1.0.8
 
 ## Version
 
+- v2.1 – Jun 9, 2025  
+  Added support for interpolation and logging of removed channels  
+  - Saves interpolated channels to .mat and .txt  
+  - Prepares subjects for group-level topomap without mismatch errors  
+  - Simplified QC overlay by logging only (removed red-dot figure)  
 - v2.0 – Jun 7, 2025
   Multi-subject loop with modular output paths
   - Added normalized bandpower + QC master CSV
