@@ -28,21 +28,21 @@ This repository provides a fully automated MATLAB pipeline for preprocessing and
 
 ## Files Included
 
-| Folder/File                        | Description                                                               |
-|------------------------------------|---------------------------------------------------------------------------|
-| eeg_analysis_multisub_v2_1.m       | Multi-subject MATLAB analysis script                                      |
-| check_subject_integrity.m          | script to verify output consistency                                       |
-| README.md                          | This documentation                                                        |
-| outputs/                           | Contains all per-subject outputs listed below                             |
-|----------------------------------------------------------------------------------------------------------------|
-| sub-XXX_cleaned_final_v2.1.set     | Cleaned EEGLAB datasets (auto-generated)                                  | 
-| _psd_matrix_v2.1.csv               | PSD matrix (all channels) via spectopo()                                  |
-| _bandpower_matrix_v2.1.csv         | Theta, Alpha, Beta power by channel                                       |
-| _qc_log_v2.1.txt                   | Per-subject QC log (ICs rejected, bandpower means, interpolated channels) |
-| _interpolation_log_v2.1.mat        | Per-subject .mat file with interpolated channel flags and labels          |
-| _summary_v2.1.mat                  | Saved variables for batch/group QC analysis                               |
-| _topomap_summary_v2.1.png          | Combined figure (PSD + 3 band topomaps)                                   |
-| qc_summary_all_subjects.csv        | Master log of normalized bandpower + ICs rejected                         |
+| Folder/File                        | Description                                   |
+|------------------------------------|-----------------------------------------------|
+| eeg_analysis_multisub_v2_1.m       | Multi-subject MATLAB analysis script          |
+| check_subject_integrity.m          | script to verify output consistency           |
+| README.md                          | This documentation                            |
+| outputs/                           | Contains all per-subject outputs listed below |
+|------------------------------------------------------------------------------------|
+| sub-XXX_cleaned_final_v2.1.set     | Cleaned EEGLAB datasets (auto-generated)      | 
+| _psd_matrix_v2.1.csv               | PSD matrix (all channels) via spectopo()      |
+| _bandpower_matrix_v2.1.csv         | Theta, Alpha, Beta power by channel           |
+| _qc_log_v2.1.txt                   | Per-subject QC log (ICs rejected, bandpower means, interpolated channels) 
+| _interpolation_log_v2.1.mat        | Per-subject .mat file with interpolated channel flags and labels          
+| _summary_v2.1.mat                  | Saved variables for batch/group QC analysis   |
+| _topomap_summary_v2.1.png          | Combined figure (PSD + 3 band topomaps)       |
+| qc_summary_all_subjects.csv        | Master log of normalized bandpower + ICs rejected                  
 
 
 > Raw EEG `.set` file not included due to size. Tested on OpenNeuro sub-001 (eyes-closed).
