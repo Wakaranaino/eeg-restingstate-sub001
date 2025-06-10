@@ -1,6 +1,6 @@
 Subject: sub-001
 ICs rejected: 5
 Interpolated Channels: 0
-Theta Power Mean: 5.3951
-Alpha Power Mean: 1.8401
-Beta Power Mean: 1.9779
+Theta Power Mean: 5.3954
+Alpha Power Mean: 1.8406
+Beta Power Mean: 1.9789

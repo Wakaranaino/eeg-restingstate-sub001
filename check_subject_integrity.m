@@ -32,7 +32,7 @@ expected_channels = [];
 
 for i = 1:height(T)
     subj_id = T.Subject{i};
-    mat_file = fullfile(summary_dir, subj_id, [subj_id '_v2.0_summary.mat']);
+    mat_file = fullfile(summary_dir, subj_id, [subj_id '_v2.1_summary.mat']);
 
     if isfile(mat_file)
         S = load(mat_file);
