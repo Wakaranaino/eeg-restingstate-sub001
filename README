@@ -1,152 +1,138 @@
-# EEG Resting-State Analysis: Multi-Subject ICA, PSD, and Bandpower Topomap
+# EEG Resting-State Connectivity and Spectral Analysis (Multi-Subject)
 
-This repository provides a fully automated MATLAB pipeline for preprocessing and analyzing resting-state EEG data across multiple subjects using EEGLAB. It was originally developed for [OpenNeuro dataset: ds004504](https://doi.org/10.18112/openneuro.ds004504.v1.0.8) and has been generalized from single-subject scripts to a multi-subject batch framework.
+This repository provides a complete pipeline for **preprocessing**, **spectral feature extraction**, and **functional connectivity analysis** of resting-state EEG data across multiple subjects.
 
----
-
-## Overview
-
-### Goal
-Extract clean spectral features (Theta, Alpha, Beta) from EEG recordings and visualize scalp-wide distributions — supporting multi-subject normalization, quality control (QC), and group-level comparison.
+Originally developed for the [OpenNeuro dataset: ds004504](https://doi.org/10.18112/openneuro.ds004504.v1.0.8), this project now includes both **MATLAB** (for preprocessing) and **Python** (for connectivity and graph-theoretic analysis) pipelines.
 
 ---
 
-### Group-Level Statistical Analysis *(New)*
+## 🧠 Overview
 
-**Script**: `eeg_group_stats_v1.m`  
-Performs group-level bandpower comparison across Control, AD, and FTD groups:
-
-- Loads merged subject QC data (`qc_summary_all_subjects.csv`) + labels (`participants.tsv`)
-- One-way ANOVA per band (Theta, Alpha, Beta)
-- Post-hoc tests with significance stars
-- Pairwise Cohen’s d effect sizes
-- Summary statistics table with ANOVA p, post-hoc results, and max effect size
-- Group bar plots with error bars + significance stars
-- Scalp topomaps averaged by group × band
+### Goals
+- Clean multi-subject EEG using EEGLAB and ICA.  
+- Extract power spectral density (PSD) and bandpower maps (Theta, Alpha, Beta).  
+- Compute functional connectivity (wPLI) and graph-theoretic measures across brain regions.  
+- Compare **Control (CN)**, **Alzheimer’s (AD)**, and **Frontotemporal Dementia (FTD)** groups.
 
 ---
 
-### Preprocessing Pipeline
-Script: `eeg_preprocessing_multisub_v2_1.m`
+## 📊 Analysis Blocks
 
-1. Load raw `.set` EEG dataset  
-2. Artifact reduction via `clean_rawdata()` (ASR)  
-3. Low-pass filter at 40 Hz  
-4. Average reference and **interpolate missing channels** 
-5. Run ICA (Infomax)  
-6. IC classification with ICLabel  
-7. Auto-reject artifactual ICs (e.g., eye, muscle)  
-8. Compute PSD via `spectopo()`  
-9. Plot scalp maps via `pop_spectopo()`  
-10. Normalize bandpower per subject  
-11. Log ICs rejected, bandpower, and interpolated channels (CVS + TXT + MAT)  
-12. Save all outputs under `outputs/` organized per subject
+| Block | Focus | ROI / Scope | Notes |
+|-------|--------|--------------|-------|
+| **Block 1** | Global alpha wPLI | Whole head | Baseline alpha connectivity |
+| **Block 2** | Posterior alpha wPLI | Posterior ROI | Visual/occipital networks |
+| **Block 3** | Frontal alpha wPLI | Frontal ROI | Frontal network integrity |
+| **Block X** | CN-anchored composite | Whole head | Normalized multi-band (Δ–γ) connectivity |
 
 ---
 
-### What’s New in Version 2.1 (June 9, 2025)
+## ⚙️ Pipelines
 
-- Channel interpolation (spherical)
-- Logs interpolated channels per subject
-- Compatible with group-level topomap
+### MATLAB — Preprocessing
+Script: `eeg_preprocessing_multisub_v2_2.m`
 
----
+Steps:
+1. Load raw `.set` EEG files  
+2. Clean artifacts via ASR (`clean_rawdata`)  
+3. Interpolate bad channels and average reference  
+4. ICA + ICLabel rejection  
+5. PSD and bandpower extraction (`spectopo`)  
+6. Save cleaned `.set` + PSD/band CSVs under `/outputs/sub-XXX/`
 
-## Files Included
-
-| Folder/File                          | Description                                                  |
-|--------------------------------------|--------------------------------------------------------------|
-| `eeg_preprocessing_multisub_v2_1.m`  | Preprocessing pipeline for multiple subjects                 |
-| `eeg_group_stats_v1.m`               | Group-level stats & topomap script                           |
-| `check_subject_integrity.m`          | Utility script to verify preprocessing outputs               |
-| `outputs/`                           | Output directory (see below for contents)                    |
-
-### outputs/ structure:
-
-- `outputs/sub-XXX/` — Individual subject folders  
-  - `*_v2.1_cleaned_final.set` — Cleaned EEG (one-file format)  
-  - `*_bandpower_matrix.csv`, `*_psd_matrix.csv` — PSD + band features  
-  - `*_qc_log.txt`, `*_summary.mat`, `*_interpolation_log.mat` — QC and interpolation logs  
-  - `*_topomap_summary.png` — Per-subject scalp maps  
-
-- `outputs/stats/` — Group-level stats  
-  - `group_bandpower_means.csv` — Mean ± SEM by group  
-  - `anova_bandpower_pvalues.csv` — ANOVA results per band  
-  - `posthoc_all_bands.csv` — Pairwise post-hoc comparisons  
-  - `effect_size_all_pairs.csv` — Cohen’s d table  
-  - `bandpower_stats_summary.csv` — Summary table (band, p, sig, max d)  
-  - `group_bandpower_comparison.png/pdf` — Bar plot with significance  
-  - `topomap_group_[group].png` — Averaged scalp maps per group  
-
-> Only a few `.set` files (e.g., `sub-001`, `sub-004`) are included as examples.  
-> Raw data from OpenNeuro should be downloaded to reproduce full outputs.
+Other utilities:
+- `check_subject_integrity.m` — sanity check for per-subject outputs  
+- `Stats_outliers.m` — outlier removal and QC  
+- `eeg_group_stats_v3.m` — group-level PSD statistics and topomaps  
 
 ---
 
-## Sample Output
+### Python — Connectivity & Graph Analysis
 
-![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/sub-001/sub-001_v2.1_topomap_summary.png)  
-*Topographic maps of Theta, Alpha, Beta power, plus PSD distribution*
+#### Scripts / Notebooks
+Located under `/notebooks/`:
+- `Block 1 script_stats.ipynb` – Global alpha connectivity  
+- `Block 2 script_stats.ipynb` – Posterior ROI alpha  
+- `Block 3 script_stats.ipynb` – Frontal ROI alpha  
+- `Block X script.ipynb` – CN-anchored composite analysis  
+
+#### Outputs (under `/outputs/block_`)
+Each block includes:
+- `*_summary.csv` — subject-wise connectivity metrics  
+- `*_anova.csv`, `*_pairwise.csv` — group-level statistics  
+- `*_CI_means.csv`, `*_CI_d.csv` — bootstrap 95% confidence intervals  
+- `*_graph_metrics.csv` — per-subject network features  
+- Violin plots + permutation histograms (in `/figures/`)
+
+#### Graph metrics computed:
+- **Mean degree** — average connection strength per node  
+- **Global efficiency** — integration of the network  
+- **Weighted clustering coefficient** — local clustering of strong connections  
 
 ---
 
-## Reproducibility
+## 🧩 CN-Anchored Normalization (Block X)
+For each subject, connectivity matrices are z-scored relative to the CN group mean and standard deviation (CN-anchored normalization).
+- All statistical analyses (ANOVA, pairwise tests, CIs) are performed on these normalized wPLI values directly.
+- For graph-theoretic metrics only, edges below the CN mean (negative z-values) are set to zero.
+  This focuses graph metrics on supra-CN (stronger-than-control) connections, while keeping the rest of the statistics unchanged.
+---
 
-The pipeline is reproducible with:
-- Raw EEG files from OpenNeuro `ds004504`
-- Scripts in this repo (`v2.1` preprocessing + `v1.0` stats)
-
-Suggested test cases:
-- AD: sub-001 to sub-004  
-- CN: sub-037 to sub-040  
-- FTD: sub-066 to sub-069
+## 📁 Repository Structure
+├── matlab/
+│   ├── eeg_preprocessing_multisub_v2_2.m
+│   ├── eeg_group_stats_v3.m
+│   ├── check_subject_integrity.m
+│   └── Stats_outliers.m
+│
+├── notebooks/
+│   ├── Block 1 script_stats.ipynb
+│   ├── Block 2 script_stats.ipynb
+│   ├── Block 3 script_stats.ipynb
+│   └── Block X script.ipynb
+│
+├── outputs/
+│   ├── Preprocessing/
+│   ├── Block1/
+│   ├── Block2/
+│   ├── Block3/
+│   └── BlockX/
+│
+└── participants.tsv
 
 ---
 
-## Requirements
+## 🧪 Requirements
 
-- MATLAB R2022a or later  
-- [EEGLAB toolbox](https://sccn.ucsd.edu/eeglab/index.php)  
+### MATLAB
+- R2022a or later  
+- EEGLAB 2023.x  
 - Signal Processing Toolbox  
-- `clean_rawdata()` EEGLAB plugin (optional but recommended)  
+- `clean_rawdata()` plugin  
 
----
+### Python
+```bash
+pip install mne mne-connectivity pingouin networkx numpy pandas matplotlib scipy
 
-## Versioning
+## 📈 Example Outputs
+-	Group-averaged scalp topographies (Theta, Alpha, Beta) across CN, AD, and FTD. (https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/Preprocessing/topomap_grid_3x3_rowlabels.png)
+- Global Alpha connectivity (wPLI) with group comparisons and significance marker. (https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/Block1/figures/block1_global_alpha_stats_violin.png)
+- CN-anchored differential node-strength maps (AD–CN, FTD–CN).
 
-### Group-Level Stats Scripts
-- **v1.0** – Jun 10, 2025  
-  First release of group-level EEG stats:  
-  - ANOVA, post-hoc (with stars)  
-  - Cohen’s d  
-  - Topomaps + summary tables  
+## 📚 Dataset Attribution
 
-### Preprocessing Scripts
-- **v2.1** – Jun 9, 2025  
-  Interpolation added + per-channel QC logs  
-- **v2.0** – Jun 7, 2025  
-  Modular preprocessing + normalized power output  
-- **v1.3** – Jun 6, 2025  
-  Scalable loop + subject skipping  
-- **v1.0–1.2** – Initial development (June 1–5, 2025)
+Miltiadous, A., Tzimourta, K. D., Afrantou, T., Ioannidis, P., Grigoriadis, N., Tsalikakis, D. G., Angelidis, P., Tsipouras, M. G., Glavas, E., Giannakeas, N., & Tzallas, A. T. (2024).
+A dataset of EEG recordings from Alzheimer’s disease, Frontotemporal dementia and Healthy subjects.
+OpenNeuro. DOI: 10.18112/openneuro.ds004504.v1.0.8￼
 
----
+## 🪪 License
 
-## Dataset Attribution
+MIT License — free for academic use with proper citation.
 
-> EEG recordings from: Alzheimer’s, Frontotemporal Dementia, and Healthy controls  
-> Andreas Miltiadous and Katerina D. Tzimourta and Theodora Afrantou and Panagiotis Ioannidis and Nikolaos Grigoriadis and Dimitrios G. Tsalikakis and Pantelis Angelidis and Markos G. Tsipouras and Evripidis Glavas and Nikolaos Giannakeas and Alexandros T. Tzallas (2024). A dataset of EEG recordings from: Alzheimer's disease, Frontotemporal dementia and Healthy subjects. OpenNeuro. [Dataset] doi: doi:10.18112/openneuro.ds004504.v1.0.8
+⸻
 
----
+## 📬 Contact
 
-## License
-
-MIT License — open for academic and research reuse with credit.
-
----
-
-## Contact
-
-For questions or collaboration, feel free to contact: `vt.gao@asu.edu`  
-[GitHub Profile](https://github.com/Wakaranaino)
-
+Author: Vermut Gao
+📧 bohago@gmail.com
+GitHub: @Wakaranaino￼
