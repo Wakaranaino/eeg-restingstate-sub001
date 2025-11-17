@@ -117,7 +117,7 @@ pip install mne mne-connectivity pingouin networkx numpy pandas matplotlib scipy
 ## 📈 Example Outputs
 -	Group-averaged scalp topographies (Theta, Alpha, Beta) across CN, AD, and FTD. (https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/Preprocessing/topomap_grid_3x3_rowlabels.png)
 - Global Alpha connectivity (wPLI) with group comparisons and significance marker. (https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/Block1/figures/block1_global_alpha_stats_violin.png)
-- CN-anchored differential node-strength maps (AD–CN, FTD–CN).
+- CN-anchored differential node-strength maps (AD–CN, FTD–CN). (https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/BlockX/figures/topomap_CNanchored_deltas_combined.png)
 
 ## 📚 Dataset Attribution
 
