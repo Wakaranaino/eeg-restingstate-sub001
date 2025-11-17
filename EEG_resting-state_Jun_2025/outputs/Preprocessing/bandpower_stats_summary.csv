@@ -1,0 +1,4 @@
+Band,ANOVA_p,PostHoc_Significant,Max_Cohens_d
+Theta,5.73e-09***,"A vs C, A vs F, C vs F",1.77687532305706
+Alpha,1.7e-06***,"A vs C, C vs F",1.38302385624808
+Beta,0.0952,"–",0.561396648713557

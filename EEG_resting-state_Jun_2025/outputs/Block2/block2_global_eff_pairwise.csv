@@ -1,0 +1,4 @@
+Contrast,A,B,Paired,Parametric,dof,alternative,p-adjust,BF10
+group,AD,CN,False,True,1.0,two-sided,bonf,nan
+group,AD,FTD,False,True,1.0,two-sided,bonf,nan
+group,CN,FTD,False,True,1.0,two-sided,bonf,nan

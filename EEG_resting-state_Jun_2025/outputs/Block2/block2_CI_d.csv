@@ -1,0 +1,4 @@
+contrast,CI_low,CI_high
+CN-AD,0.23,0.94
+CN-FTD,0.15,0.97
+AD-FTD,-0.46,0.27
