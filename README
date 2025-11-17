@@ -2,108 +2,151 @@
 
 This repository provides a fully automated MATLAB pipeline for preprocessing and analyzing resting-state EEG data across multiple subjects using EEGLAB. It was originally developed for [OpenNeuro dataset: ds004504](https://doi.org/10.18112/openneuro.ds004504.v1.0.8) and has been generalized from single-subject scripts to a multi-subject batch framework.
 
+---
+
 ## Overview
 
-**Goal**:  Extract clean spectral features (Theta, Alpha, Beta) from EEG recordings and visualize scalp-wide distributions, while supporting multi-subject normalization, quality control (QC), and group-level summaries.
+### Goal
+Extract clean spectral features (Theta, Alpha, Beta) from EEG recordings and visualize scalp-wide distributions — supporting multi-subject normalization, quality control (QC), and group-level comparison.
 
-**Pipeline**:
-1. Load .set EEG dataset
-2. Automated artifact reduction via clean_rawdata()
-3. Apply low-pass filter at 40 Hz
-4. Re-reference to average and interpolate missing channels (optional, spherical)
-5. Run ICA (Infomax)
-6. Component classification with ICLabel
-7. Auto-reject artifactual components (e.g., blinks, muscle, ECG)
-8. Compute PSD matrix via spectopo()
-9. Generate PSD plots and scalp maps via pop_spectopo()
-10. Normalize bandpower within each subject (proportional to total power)
-11. Log QC metrics (ICs rejected, bandpower means, interpolated channels) to a master CSV and per-subject log
-12. Save all outputs to organized subject-level folders under /outputs/
+---
 
-***New in Version 2.1 (June 9, 2025)***
-- Channel interpolation added (spherical method)
-- Logs interpolated channels per subject (mat + QC txt)
-- Compatible with group-level topomap averaging
-- Visual red-flag overlay removed (replaced with text logs for clarity)
+### Group-Level Statistical Analysis *(New)*
+
+**Script**: `eeg_group_stats_v1.m`  
+Performs group-level bandpower comparison across Control, AD, and FTD groups:
+
+- Loads merged subject QC data (`qc_summary_all_subjects.csv`) + labels (`participants.tsv`)
+- One-way ANOVA per band (Theta, Alpha, Beta)
+- Post-hoc tests with significance stars
+- Pairwise Cohen’s d effect sizes
+- Summary statistics table with ANOVA p, post-hoc results, and max effect size
+- Group bar plots with error bars + significance stars
+- Scalp topomaps averaged by group × band
+
+---
+
+### Preprocessing Pipeline
+Script: `eeg_preprocessing_multisub_v2_1.m`
+
+1. Load raw `.set` EEG dataset  
+2. Artifact reduction via `clean_rawdata()` (ASR)  
+3. Low-pass filter at 40 Hz  
+4. Average reference and **interpolate missing channels** 
+5. Run ICA (Infomax)  
+6. IC classification with ICLabel  
+7. Auto-reject artifactual ICs (e.g., eye, muscle)  
+8. Compute PSD via `spectopo()`  
+9. Plot scalp maps via `pop_spectopo()`  
+10. Normalize bandpower per subject  
+11. Log ICs rejected, bandpower, and interpolated channels (CVS + TXT + MAT)  
+12. Save all outputs under `outputs/` organized per subject
+
+---
+
+### What’s New in Version 2.1 (June 9, 2025)
+
+- Channel interpolation (spherical)
+- Logs interpolated channels per subject
+- Compatible with group-level topomap
+
+---
 
 ## Files Included
 
-| Folder/File                        | Description                                   |
-|------------------------------------|-----------------------------------------------|
-| eeg_analysis_multisub_v2_1.m       | Multi-subject MATLAB analysis script          |
-| check_subject_integrity.m          | script to verify output consistency           |
-| README.md                          | This documentation                            |
-| outputs/                           | Contains all per-subject outputs listed below |
-|------------------------------------------------------------------------------------|
-| sub-XXX_cleaned_final_v2.1.set     | Cleaned EEGLAB datasets (auto-generated)      | 
-| _psd_matrix_v2.1.csv               | PSD matrix (all channels) via spectopo()      |
-| _bandpower_matrix_v2.1.csv         | Theta, Alpha, Beta power by channel           |
-| _qc_log_v2.1.txt                   | Per-subject QC log (ICs rejected, bandpower means, interpolated channels) 
-| _interpolation_log_v2.1.mat        | Per-subject .mat file with interpolated channel flags and labels          
-| _summary_v2.1.mat                  | Saved variables for batch/group QC analysis   |
-| _topomap_summary_v2.1.png          | Combined figure (PSD + 3 band topomaps)       |
-| qc_summary_all_subjects.csv        | Master log of normalized bandpower + ICs rejected                  
+| Folder/File                          | Description                                                  |
+|--------------------------------------|--------------------------------------------------------------|
+| `eeg_preprocessing_multisub_v2_1.m`  | Preprocessing pipeline for multiple subjects                 |
+| `eeg_group_stats_v1.m`               | Group-level stats & topomap script                           |
+| `check_subject_integrity.m`          | Utility script to verify preprocessing outputs               |
+| `outputs/`                           | Output directory (see below for contents)                    |
 
+### outputs/ structure:
 
-> Raw EEG `.set` file not included due to size. Tested on OpenNeuro sub-001 (eyes-closed).
+- `outputs/sub-XXX/` — Individual subject folders  
+  - `*_v2.1_cleaned_final.set` — Cleaned EEG (one-file format)  
+  - `*_bandpower_matrix.csv`, `*_psd_matrix.csv` — PSD + band features  
+  - `*_qc_log.txt`, `*_summary.mat`, `*_interpolation_log.mat` — QC and interpolation logs  
+  - `*_topomap_summary.png` — Per-subject scalp maps  
+
+- `outputs/stats/` — Group-level stats  
+  - `group_bandpower_means.csv` — Mean ± SEM by group  
+  - `anova_bandpower_pvalues.csv` — ANOVA results per band  
+  - `posthoc_all_bands.csv` — Pairwise post-hoc comparisons  
+  - `effect_size_all_pairs.csv` — Cohen’s d table  
+  - `bandpower_stats_summary.csv` — Summary table (band, p, sig, max d)  
+  - `group_bandpower_comparison.png/pdf` — Bar plot with significance  
+  - `topomap_group_[group].png` — Averaged scalp maps per group  
+
+> Only a few `.set` files (e.g., `sub-001`, `sub-004`) are included as examples.  
+> Raw data from OpenNeuro should be downloaded to reproduce full outputs.
+
+---
 
 ## Sample Output
 
 ![Topomap Summary](https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/sub-001/sub-001_v2.1_topomap_summary.png)  
-*Topographic maps of Theta, Alpha, and Beta bandpower, plus PSD distribution*
+*Topographic maps of Theta, Alpha, Beta power, plus PSD distribution*
+
+---
+
+## Reproducibility
+
+The pipeline is reproducible with:
+- Raw EEG files from OpenNeuro `ds004504`
+- Scripts in this repo (`v2.1` preprocessing + `v1.0` stats)
+
+Suggested test cases:
+- AD: sub-001 to sub-004  
+- CN: sub-037 to sub-040  
+- FTD: sub-066 to sub-069
+
+---
 
 ## Requirements
 
-- MATLAB R2022a or later
-- [EEGLAB toolbox](https://sccn.ucsd.edu/eeglab/index.php)
-- Signal Processing Toolbox (for `pwelch`, `bandpower`)
-- Optional: clean_rawdata() plugin (EEGLAB plugin manager)
+- MATLAB R2022a or later  
+- [EEGLAB toolbox](https://sccn.ucsd.edu/eeglab/index.php)  
+- Signal Processing Toolbox  
+- `clean_rawdata()` EEGLAB plugin (optional but recommended)  
 
-## Citation
+---
 
-If you use this script or adapt it for academic work, feel free to credit:
+## Versioning
 
-> Vermut Gao, "EEG Resting-State Pipeline – sub001 Analysis", 2025  
-> [GitHub Repository Link](https://github.com/Wakaranaino/eeg-restingstate-sub001)
+### Group-Level Stats Scripts
+- **v1.0** – Jun 10, 2025  
+  First release of group-level EEG stats:  
+  - ANOVA, post-hoc (with stars)  
+  - Cohen’s d  
+  - Topomaps + summary tables  
 
-## Contact
+### Preprocessing Scripts
+- **v2.1** – Jun 9, 2025  
+  Interpolation added + per-channel QC logs  
+- **v2.0** – Jun 7, 2025  
+  Modular preprocessing + normalized power output  
+- **v1.3** – Jun 6, 2025  
+  Scalable loop + subject skipping  
+- **v1.0–1.2** – Initial development (June 1–5, 2025)
 
-For questions or collaboration, reach out via GitHub or email: `vt.gao@asu.edu`
+---
 
 ## Dataset Attribution
 
-This script uses EEG data from the following OpenNeuro dataset:
+> EEG recordings from: Alzheimer’s, Frontotemporal Dementia, and Healthy controls  
+> Andreas Miltiadous and Katerina D. Tzimourta and Theodora Afrantou and Panagiotis Ioannidis and Nikolaos Grigoriadis and Dimitrios G. Tsalikakis and Pantelis Angelidis and Markos G. Tsipouras and Evripidis Glavas and Nikolaos Giannakeas and Alexandros T. Tzallas (2024). A dataset of EEG recordings from: Alzheimer's disease, Frontotemporal dementia and Healthy subjects. OpenNeuro. [Dataset] doi: doi:10.18112/openneuro.ds004504.v1.0.8
 
-Andreas Miltiadous, Katerina D. Tzimourta, Theodora Afrantou, Panagiotis Ioannidis, Nikolaos Grigoriadis, Dimitrios G. Tsalikakis, Pantelis Angelidis, Markos G. Tsipouras, Evripidis Glavas, Nikolaos Giannakeas, Alexandros T. Tzallas (2024).
-A dataset of EEG recordings from: Alzheimer’s disease, Frontotemporal dementia and Healthy subjects.
-OpenNeuro. [Dataset] https://doi.org/10.18112/openneuro.ds004504.v1.0.8
-
-## Version
-
-- v2.1 – Jun 9, 2025  
-  Added support for interpolation and logging of removed channels  
-  - Saves interpolated channels to .mat and .txt  
-  - Prepares subjects for group-level topomap without mismatch errors  
-  - Simplified QC overlay by logging only (removed red-dot figure)  
-- v2.0 – Jun 7, 2025
-  Multi-subject loop with modular output paths
-  - Added normalized bandpower + QC master CSV
-  - Ready for group-level comparison and visualization
-  - Includes subject integrity checker
-- v1.3 – Jun 6, 2025:  
-  Refactored for multi-subject scaling and reusability:
-  - Added load_cleaned_set to skip preprocessing on reruns
-  - Standardized path handling and parameter setup
-  - Modularized bandpower logic (band_defs, bandpower_struct)
-  - Automated QC logging (.txt, .mat, master .csv)
-  - Adaptive plotting for topomaps and summaries
-- v1.2 – Jun 3, 2025:  
-  Major upgrade: research-level `clean_rawdata()`, added `spectopo()` for full PSD matrix, organized output folder
-- v1.1 – Jun 2, 2025:  
-  Fully automated version with `clean_rawdata()` + ICLabel rejection
-- v1.0 – Initial release (Jun 1, 2025)
+---
 
 ## License
 
-This code is released under the MIT License. Feel free to modify and reuse with proper attribution.
+MIT License — open for academic and research reuse with credit.
+
+---
+
+## Contact
+
+For questions or collaboration, feel free to contact: `vt.gao@asu.edu`  
+[GitHub Profile](https://github.com/Wakaranaino)
 
