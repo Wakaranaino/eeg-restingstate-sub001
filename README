@@ -6,7 +6,7 @@ Originally developed for the [OpenNeuro dataset: ds004504](https://doi.org/10.18
 
 ---
 
-## 🧠 Overview
+## Overview
 
 ### Goals
 - Clean multi-subject EEG using EEGLAB and ICA.  
@@ -16,7 +16,7 @@ Originally developed for the [OpenNeuro dataset: ds004504](https://doi.org/10.18
 
 ---
 
-## 📊 Analysis Blocks
+## Analysis Blocks
 
 | Block | Focus | ROI / Scope | Notes |
 |-------|--------|--------------|-------|
@@ -27,7 +27,7 @@ Originally developed for the [OpenNeuro dataset: ds004504](https://doi.org/10.18
 
 ---
 
-## ⚙️ Pipelines
+## Pipelines
 
 ### MATLAB — Preprocessing
 Script: `eeg_preprocessing_multisub_v2_2.m`
@@ -71,14 +71,14 @@ Each block includes:
 
 ---
 
-## 🧩 CN-Anchored Normalization (Block X)
+## CN-Anchored Normalization (Block X)
 For each subject, connectivity matrices are z-scored relative to the CN group mean and standard deviation (CN-anchored normalization).
 - All statistical analyses (ANOVA, pairwise tests, CIs) are performed on these normalized wPLI values directly.
 - For graph-theoretic metrics only, edges below the CN mean (negative z-values) are set to zero.
   This focuses graph metrics on supra-CN (stronger-than-control) connections, while keeping the rest of the statistics unchanged.
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 ├── matlab/
 │   ├── eeg_preprocessing_multisub_v2_2.m
 │   ├── eeg_group_stats_v3.m
@@ -102,7 +102,7 @@ For each subject, connectivity matrices are z-scored relative to the CN group me
 
 ---
 
-## 🧪 Requirements
+## Requirements
 
 ### MATLAB
 - R2022a or later  
@@ -114,25 +114,25 @@ For each subject, connectivity matrices are z-scored relative to the CN group me
 ```bash
 pip install mne mne-connectivity pingouin networkx numpy pandas matplotlib scipy
 
-## 📈 Example Outputs
+## Example Outputs
 - Group-averaged scalp topographies (Theta, Alpha, Beta) across CN, AD, and FTD. (https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/Preprocessing/figures/topomap_grid_3x3_rowlabels.png)
 - Global Alpha connectivity (wPLI) with group comparisons and significance marker. (https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/Block1/figures/block1_global_alpha_stats_violin.png)
 - CN-anchored differential node-strength maps (AD–CN, FTD–CN). (https://github.com/Wakaranaino/eeg-restingstate-sub001/blob/main/outputs/BlockX/figures/topomap_CNanchored_deltas_combined.png)
 
-## 📚 Dataset Attribution
+## Dataset Attribution
 
 Miltiadous, A., Tzimourta, K. D., Afrantou, T., Ioannidis, P., Grigoriadis, N., Tsalikakis, D. G., Angelidis, P., Tsipouras, M. G., Glavas, E., Giannakeas, N., & Tzallas, A. T. (2024).
 A dataset of EEG recordings from Alzheimer’s disease, Frontotemporal dementia and Healthy subjects.
 OpenNeuro. DOI: 10.18112/openneuro.ds004504.v1.0.8￼
 
-## 🪪 License
+## License
 
 MIT License — free for academic use with proper citation.
 
 ⸻
 
-## 📬 Contact
+## Contact
 
 Author: Vermut Gao
-📧 bohago@gmail.com
+Email: bohago@gmail.com
 GitHub: @Wakaranaino￼
