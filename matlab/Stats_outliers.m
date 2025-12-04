@@ -11,7 +11,7 @@ merged = readtable(infile);
 
 % Columns to check (must exist in merged)
 bands  = {'ThetaMean','AlphaMean','BetaMean'};
-% Groups are coded 'C','A','F' in your files
+% Groups are coded 'C','A','F' in files
 groups = {'C','A','F'};
 pretty  = struct('C','CN','A','AD','F','FTD');
 
@@ -57,7 +57,7 @@ for b = 1:numel(bands)
             disp(flagged_subs);
         end
         
-        % Append to CSV rows (for all subjects so you can review thresholds)
+        % Append to CSV rows (for all subjects so that can review thresholds)
         rows_Subject = [rows_Subject; subs]; %#ok<AGROW>
         rows_Group   = [rows_Group; repmat({pretty.(g)}, numel(subs), 1)]; %#ok<AGROW>
         rows_Band    = [rows_Band; repmat({band}, numel(subs), 1)]; %#ok<AGROW>
