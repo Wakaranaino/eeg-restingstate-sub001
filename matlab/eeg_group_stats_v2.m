@@ -35,13 +35,12 @@ fprintf('FTD (F):     %d subjects\n', n_FTD);
 
 % Band columns in merged (already normalized 0–1):
 bands        = {'ThetaMean','AlphaMean','BetaMean'};
-band_labels  = {'Theta','Alpha','Beta'};     % pretty names
-group_codes  = {'C','A','F'};                % CN, AD, FTD in this order
+band_labels  = {'Theta','Alpha','Beta'};     
+group_codes  = {'C','A','F'};                
 
 
 %% ============================================================
-%  1. CLEAN per-band distribution plots (NO STARS, NO BRACKETS)
-%     -> 1 figure per band
+%  1. CLEAN per-band distribution plots, 1 figure per band
 %% ============================================================
 for bi = 1:numel(bands)
     this_band = bands{bi};
@@ -50,7 +49,6 @@ for bi = 1:numel(bands)
     fig_box = figure('Position',[100 100 600 400]);
 
     % boxchart by diagnostic group
-    % (This is just distribution. No stats text, no stars.)
     boxchart( categorical(merged.Group), merged.(this_band), ...
         'BoxFaceColor',[0.8 0.85 1.0], ...
         'LineWidth',1.2, ...
@@ -61,7 +59,7 @@ for bi = 1:numel(bands)
 
     % add light jittered subject dots so it's not just a box
     % we jitter manually to avoid MATLAB's default legend spam
-    cats = categories(categorical(merged.Group)); % should be {'A','C','F'} or similar
+    cats = categories(categorical(merged.Group)); 
     for ci = 1:numel(cats)
         mask_here = strcmp(merged.Group, cats{ci});
         x_pos = ci + (rand(sum(mask_here),1)-0.5)*0.15; % jitter
@@ -107,14 +105,14 @@ end
 
 %% ============================================================
 %  3. Run ANOVA + posthoc for each band (C,A,F)
-%     We'll save ANOVA p, posthoc tables, etc.
+%     save ANOVA p, posthoc tables, etc.
 %% ============================================================
 anova_results = table('Size',[numel(bands),2], ...
     'VariableTypes',{'double','cell'}, ...
     'VariableNames',{'ANOVA_p','PostHoc'}, ...
     'RowNames',bands);
 
-all_posthoc = table(); % will collect all bands’ posthocs
+all_posthoc = table(); % collect all bands’ posthocs
 
 for bi = 1:numel(bands)
     Y = merged.(bands{bi});   % data values
@@ -163,7 +161,7 @@ disp(anova_results(:, 'ANOVA_p'));
 %           AD vs CN
 %           FTD vs CN
 %       (NO AD vs FTD)
-%     - Legend should only show Theta/Alpha/Beta. No "data1,data2..." junk.
+%     - Legend should only show Theta/Alpha/Beta. No "data1,data2..."
 %% ============================================================
 
 fig_sum = figure('Position',[100 100 750 480]);
@@ -184,7 +182,7 @@ for bi = 1:numel(bands)
     x = bh(bi).XEndPoints;
     errorbar(x, group_means(:,bi), group_stes(:,bi), ...
         'k','linestyle','none','LineWidth',1, ...
-        'HandleVisibility','off'); % <- keep these out of legend
+        'HandleVisibility','off'); % keep these out of legend
 end
 
 % Label axes
@@ -324,7 +322,7 @@ writetable(T_d_all, fullfile(stats_dir,'effect_size_all_pairs.csv'), ...
 
 
 %% ============================================================
-%  6. Human-readable summary table (for SOP / slides)
+%  6. Human-readable summary table
 %     - ANOVA p with stars
 %     - Which pairs are sig (<0.05) for each band
 %     - Max |d|
