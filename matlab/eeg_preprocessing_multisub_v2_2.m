@@ -18,7 +18,7 @@
 clear; close all; clc
 
 base_input_dir = '/Users/bohago/Desktop/neuro_analysis/EEG_resting-state_Jun_2025/';
-output_dir     = 'outputs';                                % common output dir
+output_dir     = 'outputs';                                
 if ~isfolder(output_dir), mkdir(output_dir); end           % ensure it exists
 
 % (optional sanity)
@@ -27,11 +27,11 @@ if ~isfolder(base_input_dir)
 end
 
 %% ===== Auto-build subject_list from participants.tsv (A/C/F groups) =====
-target_groups = {'A','C','F'};      % Matches your Group column in participants.tsv
-k_per_group   = inf;                 % How many subjects per group for prototype
-task_name     = '_task-eyesclosed'; % Raw file naming pattern (adjust if different)
+target_groups = {'A','C','F'};      % Matches Group column in participants.tsv
+k_per_group   = inf;                 
+task_name     = '_task-eyesclosed'; 
 
-output_dir = 'outputs';  % Common output directory for all subjects
+output_dir = 'outputs';  
 logdir = fullfile(output_dir,'prep_logs');
 if ~isfolder(logdir), mkdir(logdir); end
 
@@ -41,7 +41,7 @@ subject_list = {};
 for gi = 1:numel(target_groups)
     g = target_groups{gi};
     ids = T.participant_id(strcmp(T.Group,g));
-    ids = sort(ids);  % deterministic order
+    ids = sort(ids);  
     picked = 0;
     for i = 1:numel(ids)
         sid = ids{i};
@@ -69,7 +69,7 @@ band_defs.alpha = [8 13];
 band_defs.beta  = [13 30];
 band_names = fieldnames(band_defs);
 
-% Master QC file (initialize only once)
+% Master QC file
 qc_file = fullfile(output_dir, 'qc_summary_all_subjects.csv');
 if ~isfile(qc_file)
     fid = fopen(qc_file, 'w');
@@ -80,7 +80,6 @@ if ~isfile(qc_file)
     fclose(fid);
 end
 
-% Launch EEGLAB once
 eeglab;
 
 % ======================= MAIN SUBJECT LOOP ========================
@@ -192,11 +191,10 @@ T = table(channel_labels, 'VariableNames', {'Channel'});
 for i = 1:length(band_names)
     band = band_names{i};
     col_data = bandpower_struct.(band)';
-    col_name = [upper(band(1)) band(2:end) 'Power'];  % e.g., ThetaPower
+    col_name = [upper(band(1)) band(2:end) 'Power'];  
     T.(col_name) = col_data;
 end
 
-% Write to CSV
 writetable(T, fullfile(subject_output_dir, [output_prefix '_bandpower_matrix.csv']));
 
 disp(['Subject: ' subject_id]);
@@ -228,7 +226,7 @@ end
 % ----- Load interpolated channels log if exists -----
 interp_log_path = fullfile(subject_output_dir, [output_prefix '_interpolation_log.mat']);
 if isfile(interp_log_path)
-    interp_data = load(interp_log_path);  % loads as struct
+    interp_data = load(interp_log_path); 
     interpolated_channels = interp_data.interpolated_channels;
 else
     interpolated_channels = {};
@@ -250,7 +248,7 @@ end
 
 fclose(fid);
 
-% Save QC-relevant data in .mat format for later batch/group analysis
+% Save QC-relevant data in .mat format for later analysis
 save(fullfile(subject_output_dir, [output_prefix '_summary.mat']), 'bandpower_struct', 'band_defs', 'psdAll', 'freqs', 'artifactICs');
 
 % ===== Append QC to master log file =====
