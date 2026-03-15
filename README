@@ -1,4 +1,4 @@
-# EEG Resting-State Connectivity and Spectral Analysis (Multi-Subject)
+# EEG Resting-State Connectivity and Spectral Analysis
 
 This repository provides a complete pipeline for **preprocessing**, **spectral feature extraction**, and **functional connectivity analysis** of resting-state EEG data across multiple subjects.
 
